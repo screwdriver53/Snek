@@ -1,294 +1,106 @@
+'''
+Ellis Hu
+2026/10/17 - 2026/10/28
+Time taken: 8 hours
+Game is supposed to somewhat resemble a mix of touhou 
+and IMPOSSIBLE SNAKE by marchalade
+
+TO ADD: 
+- Player bullet delays
+- Intro screen
+- Cat phases? (9?)
+'''
+import aaa
 import pygame
-import random
 
-    # Overall parent class, majority of sprites will be based on this
-class basic(pygame.sprite.Sprite):
-    def __init__(self, image, x, y, active):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = image
-        self.x = x
-        self.y = y
-        self.active = active
-        self.rect = self.image.get_rect(topleft=(self.x, self.y))
+# DISPLAY
+pygame.init()
+window = pygame.display.set_mode((600, 600))
+pygame.display.set_caption("Oh, Cats!")
+background = pygame.image.load("imgs/background.png").convert_alpha()
+background = pygame.transform.scale(background, (600,600))
 
-    # Player class
-class Player(basic):
-    def __init__(self, screen):
-        self.hp = 3
-        self.screen = screen
-        self.width = screen.get_width()
-        self.height = screen.get_height()
-        self.sprites = {'walk':[pygame.image.load("imgs/mc/move1.png").convert_alpha(),
-                                pygame.image.load("imgs/mc/move2.png").convert_alpha(),
-                                pygame.image.load("imgs/mc/move3.png").convert_alpha(),
-                                pygame.image.load("imgs/mc/move4.png").convert_alpha(),
-                                pygame.image.load("imgs/mc/move5.png").convert_alpha(),
-                                pygame.image.load("imgs/mc/move6.png").convert_alpha(),
-                                pygame.image.load("imgs/mc/move7.png").convert_alpha(),
-                                ], 
-                        'attack':[pygame.image.load("imgs/mc/atk_1.png").convert_alpha(),
-                                  pygame.image.load("imgs/mc/atk_2.png").convert_alpha(),
-                                  pygame.image.load("imgs/mc/atk_3.png").convert_alpha(),
-                                  pygame.image.load("imgs/mc/atk_4.png").convert_alpha(),
-                                ]}
-        self.state = 'walk'
-        self.current_sprite = 0
-        self.hp = 5
-        self.image = self.sprites[self.state][self.current_sprite]
-        
-        super().__init__(self.sprites['walk'][0], 100, 100, True)
+# SOUNDS
+pygame.mixer.init()
+pygame.mixer.music.load('sfx/intro.mp3')
+pygame.mixer.music.play()
+intro_fin = False
 
+if intro_fin == False and pygame.mixer.music.get_busy == False:
+    pygame.mixer.music.load('sfx/loop.mp3')
+    pygame.mixer.music.play(-1)
+    intro_fin = True
 
-    def movement(self):
-        key = pygame.key.get_pressed()
-        dx = dy = 0
-        
-        if key[pygame.K_w]:
-            dy -= 5
-        elif key[pygame.K_s]:
-            dy +=5
-        elif key[pygame.K_a]:
-            dx -= 5
-        elif key[pygame.K_d]:
-            dx += 5
-        
-        self.rect.x += dx
-        self.rect.y += dy
-        self.keep_inbounds()
+clock = pygame.time.Clock()
 
-    def keep_inbounds(self):
-        if self.rect.left < 0:
-            self.rect.left = 0
-        if self.rect.right > self.width:
-            self.rect.right = self.width
-        if self.rect.top < 0:
-            self.rect.top = 0
+# Creating sprites
+char_sprites = pygame.sprite.Group()     
+bullets = pygame.sprite.Group()
 
-        if self.rect.bottom > self.screen.get_height():
-            self.rect.bottom = self.screen.get_height()
+player = aaa.Player(window)
+cat_img = pygame.image.load('imgs/cat.png').convert_alpha()
+cat = aaa.Cat(250, 100, cat_img, window)
 
-    def atk(self):
-        if self.state != 'attack':
-            self.state = 'attack'
-            self.current_sprite = 0
+bullet = aaa.Bullet(player, cat)
+cat_atk = aaa.Cat_attack(window, player, 'paw')
 
-    def update(self):
-        frames = self.sprites[self.state]
-        self.current_sprite += 0.25
+char_sprites.add(player, cat)
 
-        if int(self.current_sprite) >= len(frames):
-            if self.state == 'attack':
-                self.state = 'walk'
-                self.current_sprite = 0
-                frames = self.sprites['walk']
-            else:
-                self.current_sprite = 0
+font = pygame.font.Font(None, 64)
 
-        self.image = frames[int(self.current_sprite)]
-
-    # Player bullet class
-class Bullet(basic):
-    def __init__(self, player, cat):
-        self.image = pygame.image.load("imgs/bullet.png").convert_alpha()
-
-        x = player.rect.centerx - self.image.get_width()//2
-        y = player.rect.top
-
-        super().__init__(self.image, x, y, True)
-        self.cat = cat
-    def movement(self):
-        self.rect.y -= 10
-
-            # if it hits the cat
-        if self.rect.colliderect(self.cat.rect):
-            self.cat.hp -= 1
-            self.kill()
-            if self.cat.hp <= 0:
-                self.cat.kill()
-            return
-
-            # kill bullet if hit screen
-        if self.rect.bottom < 0:
-            self.kill()
-            return
-        
-
-
-    # Cat class
-class Cat(basic):
-    def __init__(self, x, y, image, screen):
-        super().__init__(image, x, y, True)
-        
-        self.hp = 9
-        self.screen = screen
-        self.width = screen.get_width()
-        self.height = screen.get_height()
-
-        self.sprites = {'walk':[pygame.image.load('imgs/cat/walk1.png'),
-                                pygame.image.load('imgs/cat/walk2.png'),
-                                pygame.image.load('imgs/cat/walk3.png'),
-                                pygame.image.load('imgs/cat/walk4.png'),
-                                pygame.image.load('imgs/cat/walk5.png'),
-                                pygame.image.load('imgs/cat/walk6.png'),
-                                  ],
-                        'attack':[pygame.image.load('imgs/cat/atk1.png'),
-                                  pygame.image.load('imgs/cat/atk2.png'),
-                                  pygame.image.load('imgs/cat/atk3.png'),
-                                  pygame.image.load('imgs/cat/atk4.png'),
-                                  pygame.image.load('imgs/cat/atk5.png'),
-                                  pygame.image.load('imgs/cat/atk6.png'),
-                                  ]
-                        }
-        self.state = 'walk'
-        self.current_sprite = 0
-        self.move = x
-
-    def action(self, cat_atk):
-        action = random.randint(1,2)
-        if action == 1:
-            self.movement()
-        else:
-            self.attack(cat_atk)
-
-    def movement(self):
-        self.state = 'walk'
-
-        if self.rect.x == self.move:
-            self.move = random.randint(0, self.width - self.rect.width)
-
-        if self.rect.x < self.move:
-            self.rect.x = min(self.rect.x + 5, self.move)
-        elif self.rect.x > self.move:
-            self.rect.x = max(self.rect.x - 5, self.move)
-
-        self.keep_inbounds()
-
-    def keep_inbounds(self):
-        if self.rect.left < 0:
-            self.rect.left = 0
-
-        if self.rect.right > self.width:
-            self.rect.right = self.width
-
-    def attack(self, cat_atk):
-        self.state = 'attack'
-
-        if cat_atk.finished: 
-            self.atk = random.randint(1,2)
-        
-            if self.atk == 1:
-                cat_atk.atk_paw()
-            else:
-                cat_atk.atk_scratch()
-
-    def update(self):
-        frames = self.sprites[self.state]
-
-        if frames:
-            self.current_sprite += 0.25
-            if int(self.current_sprite) >= len(frames):
-                self.current_sprite = 0
-
-            self.image = frames[int(self.current_sprite)]
-        self.keep_inbounds()
-
-    # Cat attack class
-class Cat_attack:
-    def __init__(self, screen, player, state):
-        self.warning_sfx = pygame.mixer.Sound('sfx/cat_atk_warn.mp3')
-        self.screen = screen
-        self.player = player
-        self.state = state
-
-        self.hitbox = None
-
-        self.finished = True
-        self.hit_player = False
+def loop():
+    gamestate = 0
+    cat_action_timer = 0
+    cat_act_delay = 1000
     
-        self.sprites = {'scratch':[pygame.image.load("imgs/scratch/scratch0.png").convert_alpha(),
-                                   pygame.image.load("imgs/scratch/scratch1.png").convert_alpha(),
-                                   pygame.image.load("imgs/scratch/scratch2.png").convert_alpha(),
-                                   pygame.image.load("imgs/scratch/scratch3.png").convert_alpha(),
-                                   pygame.image.load("imgs/scratch/scratch4.png").convert_alpha(),
-                                   pygame.image.load("imgs/scratch/scratch5.png").convert_alpha()],
-                        'paw':[pygame.image.load("imgs/paw/paw1.png").convert_alpha(),
-                               pygame.image.load("imgs/paw/paw2.png").convert_alpha(),
-                               pygame.image.load("imgs/paw/paw3.png").convert_alpha(),
-                               pygame.image.load("imgs/paw/paw4.png").convert_alpha(),
-                               pygame.image.load("imgs/paw/paw5.png").convert_alpha(),
-                               pygame.image.load("imgs/paw/paw6.png").convert_alpha(),
-                               pygame.image.load("imgs/paw/paw7.png").convert_alpha(),
-                               pygame.image.load("imgs/paw/paw8.png").convert_alpha(),]
-                        }
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit(0) 
 
-        self.current_sprite = 0
-        self.image = self.sprites[self.state][self.current_sprite]
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    bullets.add(aaa.Bullet(player, cat))
+                    player.atk()
 
-    def atk_scratch(self):
-        '''scratch'''
-            # Changes state for animation
-        self.state = 'scratch'
+        if gamestate == 0:
+            cat_action_timer += clock.get_time()
 
-        # Set atk
-        self.width = 100
-        self.height = 120
-        self.warn = 1200
-        self.atk = 600
-        self.do_atk()
+            if cat_action_timer >= cat_act_delay:
+                cat.action(cat_atk)
+                cat_action_timer = 0
 
+            player.movement()
+            player.update()
+            cat.update()
+
+            for bullet in bullets.copy():
+                bullet.movement()
+
+            if cat.hp <= 0:
+                gamestate = 1
+            elif player.hp <= 0:
+                gamestate = 2
+
+        window.blit(background, (0,0))
+
+        if gamestate == 0:
+            cat_atk.update()
+            char_sprites.draw(window)
+            bullets.draw(window)
+
+        elif gamestate == 1:
+            window.fill((0,0,0))
+            text = font.render('you win!', True, (255,255,255))
+            window.blit(text, (300,300))
     
-    def atk_paw(self):
-        '''paw'''
-            # Changes state for animation
-        self.state = 'paw'
+        elif gamestate == 2:
+            window.fill((0,0,0))
+            text = font.render('you lost :(', True, (255,255,255))
+            window.blit(text, (300,300))
 
-        # Set atk 
-        self.width = 100
-        self.height = 200
-        self.warn = 1500
-        self.atk = 600
-        self.do_atk()
-    
-    def do_atk(self):
-            # Keeping in bounds
-        screen_width = self.screen.get_width()
-        screen_height = self.screen.get_height()
-        x = random.randint(0, screen_width - self.width)
-        y = random.randint(0, screen_height - self.height)
+        pygame.display.flip()
+        clock.tick(60)
 
-        # 
-        self.hitbox = pygame.Rect(x, y, self.width, self.height)
-
-            # Track atk time and if it did sumthing
-        self.start_time = pygame.time.get_ticks()
-        self.finished = False
-        self.hit_player = False
-        self.current_sprite = 0
-
-        self.warning_sfx.play()
-
-    def update(self):
-        if self.finished:
-            return
-        
-        time_passed = pygame.time.get_ticks() - self.start_time
-
-        if time_passed < self.warn:
-            pygame.draw.rect(self.screen, (255,0,0), self.hitbox, 3)
-
-        elif time_passed < self.warn + self.atk:
-            frames = self.sprites[self.state]
-            self.current_sprite += 0.25
-
-            if int(self.current_sprite) >= len(frames):
-                self.current_sprite = 0
-        
-            self.image = frames[int(self.current_sprite)]
-            self.screen.blit(self.image, self.hitbox.topleft)
-
-            if self.hit_player == False and self.hitbox.colliderect(self.player.rect):
-                self.player.hp -= 1
-                self.hit_player = True
-        else:
-            self.finished = True
-            return
+loop()
