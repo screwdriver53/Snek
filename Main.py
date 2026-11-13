@@ -1,12 +1,20 @@
 '''
 Ellis Hu
-2026/10/17 - 2026/11/07
-Time taken: 11 hours
+2026/10/17 - 2026/11/09
+Time taken: 12 hours
 Game is supposed to somewhat resemble a mix of touhou 
 and IMPOSSIBLE SNAKE by marchalade
 
 TO ADD: 
-- Intro screen
+- Phase 2 and 3
+    - New sprites for cat
+    - New attacks for cat
+    - probably new music
+- Dialogue for phase 2 and 3
+    - "something about having big hate for the snake"
+- win/lose animations
+- Maybe a sort of "brain" or learning algorithm, where it will be noted
+    where the player likes to hang out at to increase attack frequency in that area
 '''
 import aaa
 import pygame
@@ -18,7 +26,7 @@ import pygame
 # DISPLAY
 pygame.init()
 window = pygame.display.set_mode((600, 600))
-pygame.display.set_caption("Oh, Cats!")
+pygame.display.set_caption("Dear Magic Cat")
 background = pygame.image.load("imgs/background.png").convert_alpha()
 background = pygame.transform.scale(background, (600,600))
 
@@ -27,16 +35,11 @@ background = pygame.transform.scale(background, (600,600))
 
 
 # SOUNDS
-intro_music_finished = False
 
 pygame.mixer.init()
 pygame.mixer.music.load('sfx/intro.mp3')
 pygame.mixer.music.play()
 
-if not intro_music_finished and not pygame.mixer.music.get_busy():
-    pygame.mixer.music.load('sfx/loop.mp3')
-    pygame.mixer.music.play(-1)
-    intro_music_finished = True
 
 clock = pygame.time.Clock()
 
@@ -76,6 +79,7 @@ char_sprites.add(player, cat)
 
 
 def loop():
+    intro_finished = False
     gamestate = 0
         # Cat timers
     cat_action_timer = 0
@@ -126,6 +130,10 @@ def loop():
             bullets.draw(window)
             player_hp_bar.update()
 
+            if not intro_finished and not pygame.mixer.music.get_busy():
+                pygame.mixer.music.load('sfx/loop.mp3')
+                pygame.mixer.music.play(-1)
+                intro_finished = True
             
             if dialogue.active:
                 dialogue.update()

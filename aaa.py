@@ -250,8 +250,8 @@ class Cat_attack():
         self.state = 'scratch'
 
         # Set atk
-        self.width = 100
-        self.height = 120
+        self.width = 200
+        self.height = 240
         self.warn = 1200
         self.atk = 600
         self.do_atk()
@@ -263,11 +263,27 @@ class Cat_attack():
         self.state = 'paw'
 
         # Set atk 
-        self.width = 100
-        self.height = 200
+        self.width = 220
+        self.height = 300
         self.warn = 1500
         self.atk = 600
         self.do_atk()
+
+        # def atk_charge(self):
+    #     '''Phase 2 - charge
+    #     - the cat will charge at the player in a linear path until reaching end of boundary
+    #     - It should locate the last position of the player before charging'''
+
+    # def spell_minions(self):
+    #     '''Phase 2 - ... maybe spawn minions, should just play animation for this attack and spawn kittens
+    #     - kittens will just follow player slowly and act as passive healing towards cat or meat shields'''
+
+    # def spell_yarn(self):
+    #     '''Phase 3 - yarn, throws yarn that slows player if they step in it'''
+
+    # def spell_totems(self):
+    #     '''Phase 3 - HEALING TOTEMS'''
+
     
     def do_atk(self):
             # Keeping in bounds
@@ -304,6 +320,7 @@ class Cat_attack():
                 self.current_sprite = 0
         
             self.image = frames[int(self.current_sprite)]
+            self.image = pygame.transform.scale(self.image, (self.width, self.height))
             self.screen.blit(self.image, self.hitbox.topleft)
 
             if self.hit_player == False and self.hitbox.colliderect(self.player.rect):
