@@ -4,7 +4,7 @@ import random
     # Overall parent class, majority of sprites will be based on this i think idk
 class basic(pygame.sprite.Sprite):
     def __init__(self, image, x, y, active):
-        pygame.sprite.Sprite.__init__(self)
+        super().__init__()
         self.image = image
         self.x = x
         self.y = y
@@ -16,6 +16,7 @@ class basic(pygame.sprite.Sprite):
 # PLAYER RELATED CLASSES
 class Player(basic):
     def __init__(self, screen):
+        self.slow = 0
         self.hp = 3
         self.screen = screen
         self.width = screen.get_width()
@@ -38,26 +39,38 @@ class Player(basic):
         self.image = self.sprites[self.state][self.current_sprite]
         
         super().__init__(self.sprites['walk'][0], 100, 100, True)
+        
+        self.hitbox_radius = 35
+        self.hitbox = pygame.Rect(0, 0, self.hitbox_radius * 2, self.hitbox_radius * 2)
+        self.hitbox.center = self.rect.center
 
     def hp(self):
         return self.hp
 
     def movement(self):
         key = pygame.key.get_pressed()
-        dx = dy = 0
-        
+
+        speed = 4
+        if pygame.time.get_ticks() < self.slow:
+            speed = 2
+
+        dx = 0
+        dy = 0
+
         if key[pygame.K_w]:
-            dy -= 5
-        elif key[pygame.K_s]:
-            dy +=5
-        elif key[pygame.K_a]:
-            dx -= 5
-        elif key[pygame.K_d]:
-            dx += 5
-        
+            dy = -speed
+        if key[pygame.K_s]:
+            dy = speed
+        if key[pygame.K_a]:
+            dx = -speed
+        if key[pygame.K_d]:
+            dx = speed
+
         self.rect.x += dx
         self.rect.y += dy
+
         self.keep_inbounds()
+        self.hitbox.center = self.rect.center
 
     def keep_inbounds(self):
         if self.rect.left < 0:
@@ -88,6 +101,7 @@ class Player(basic):
                 self.current_sprite = 0
 
         self.image = frames[int(self.current_sprite)]
+
 class Player_hp():
     def __init__(self, screen, player):
         self.screen = screen
@@ -144,31 +158,66 @@ class Cat(basic):
         self.width = screen.get_width()
         self.height = screen.get_height()
 
-        self.sprites = {'walk':[pygame.image.load('imgs/cat/walk1.png'),
-                                pygame.image.load('imgs/cat/walk2.png'),
-                                pygame.image.load('imgs/cat/walk3.png'),
-                                pygame.image.load('imgs/cat/walk4.png'),
-                                pygame.image.load('imgs/cat/walk5.png'),
-                                pygame.image.load('imgs/cat/walk6.png'),
-                                  ],
-                        'attack':[pygame.image.load('imgs/cat/atk1.png'),
-                                  pygame.image.load('imgs/cat/atk2.png'),
-                                  pygame.image.load('imgs/cat/atk3.png'),
-                                  pygame.image.load('imgs/cat/atk4.png'),
-                                  pygame.image.load('imgs/cat/atk5.png'),
-                                  pygame.image.load('imgs/cat/atk6.png'),
-                                  ]
-                        }
+        self.sprites = {
+            1 : {'walk':[pygame.image.load('imgs/p1/walk1.png').convert_alpha(),
+                            pygame.image.load('imgs/p1/walk2.png').convert_alpha(),
+                            pygame.image.load('imgs/p1/walk3.png').convert_alpha(),
+                            pygame.image.load('imgs/p1/walk4.png').convert_alpha(),
+                            pygame.image.load('imgs/p1/walk5.png').convert_alpha(),
+                            pygame.image.load('imgs/p1/walk6.png').convert_alpha(),
+                            ],
+                    'attack':[pygame.image.load('imgs/p1/atk1.png').convert_alpha(),
+                            pygame.image.load('imgs/p1/atk2.png').convert_alpha(),
+                            pygame.image.load('imgs/p1/atk3.png').convert_alpha(),
+                            pygame.image.load('imgs/p1/atk4.png').convert_alpha(),
+                            pygame.image.load('imgs/p1/atk5.png').convert_alpha(),
+                            pygame.image.load('imgs/p1/atk6.png').convert_alpha(),
+                            ]
+                    },
+            2 : {'walk':[pygame.image.load('imgs/p2/walk1.png').convert_alpha(),
+                            pygame.image.load('imgs/p2/walk2.png').convert_alpha(),
+                            pygame.image.load('imgs/p2/walk3.png').convert_alpha(),
+                            pygame.image.load('imgs/p2/walk4.png').convert_alpha(),
+                            pygame.image.load('imgs/p2/walk5.png').convert_alpha(),
+                            pygame.image.load('imgs/p2/walk6.png').convert_alpha(),
+                            ],
+                    'attack':[pygame.image.load('imgs/p2/atk1.png').convert_alpha(),
+                            pygame.image.load('imgs/p2/atk2.png').convert_alpha(),
+                            pygame.image.load('imgs/p2/atk3.png').convert_alpha(),
+                            pygame.image.load('imgs/p2/atk4.png').convert_alpha(),
+                            pygame.image.load('imgs/p2/atk5.png').convert_alpha(),
+                            pygame.image.load('imgs/p2/atk6.png').convert_alpha(),
+                            ]
+                    },
+            3 : {'walk':[pygame.image.load('imgs/p3/walk1.png').convert_alpha(),
+                            pygame.image.load('imgs/p3/walk2.png').convert_alpha(),
+                            pygame.image.load('imgs/p3/walk3.png').convert_alpha(),
+                            pygame.image.load('imgs/p3/walk4.png').convert_alpha(),
+                            pygame.image.load('imgs/p3/walk5.png').convert_alpha(),
+                            pygame.image.load('imgs/p3/walk6.png').convert_alpha(),
+                            ],
+                    'attack':[pygame.image.load('imgs/p3/atk1.png').convert_alpha(),
+                            pygame.image.load('imgs/p3/atk2.png').convert_alpha(),
+                            pygame.image.load('imgs/p3/atk3.png').convert_alpha(),
+                            pygame.image.load('imgs/p3/atk4.png').convert_alpha(),
+                            pygame.image.load('imgs/p3/atk5.png').convert_alpha(),
+                            pygame.image.load('imgs/p3/atk6.png').convert_alpha(),
+                            ]
+                    }
+        }
         self.state = 'walk'
         self.current_sprite = 0
         self.move = x
+        
+        self.phase = 1
 
-    def action(self, cat_atk):
-        action = random.randint(1,2)
+    def action(self, cat_atk, phase, yarn, player):
+        action = random.randint(1, 2)
+
         if action == 1:
             self.movement()
         else:
-            self.attack(cat_atk)
+            self.attack(cat_atk, phase, yarn, player)
 
     def movement(self):
         self.state = 'walk'
@@ -190,19 +239,51 @@ class Cat(basic):
         if self.rect.right > self.width:
             self.rect.right = self.width
 
-    def attack(self, cat_atk):
+    def attack(self, cat_atk, phase, yarn, player):
         self.state = 'attack'
 
-        if cat_atk.finished: 
+        if cat_atk.finished and phase == 1: 
             self.atk = random.randint(1,2)
         
             if self.atk == 1:
                 cat_atk.atk_paw()
             else:
                 cat_atk.atk_scratch()
+        
+        elif phase == 2:
+            self.atk = random.randint(1,3)
+
+            if self.atk == 1:
+                cat_atk.atk_paw()
+            elif self.atk == 2:
+                cat_atk.atk_scratch()
+            else:
+                cat_atk.spell_yarn(yarn, player)
+
+        elif phase == 3:
+            self.atk = random.randint(1,3)
+
+            if self.atk == 1:
+                cat_atk.atk_paw()
+            elif self.atk == 2:
+                cat_atk.atk_scratch()
+            else:
+                cat_atk.spell_yarn(yarn, player)
+
+
+    def reset(self, phase):
+        self.hp = 9
+        self.rect.center = (300, 100)
+
+        # when the phase change lmao
+        self.phase = phase
+        self.current_sprite = 0
+        self.state = 'walk'
+        self.image = self.sprites[self.phase][self.state][0]
+
 
     def update(self):
-        frames = self.sprites[self.state]
+        frames = self.sprites[self.phase][self.state]
 
         if frames:
             self.current_sprite += 0.25
@@ -250,8 +331,8 @@ class Cat_attack():
         self.state = 'scratch'
 
         # Set atk
-        self.width = 200
-        self.height = 240
+        self.width = 180
+        self.height = 220
         self.warn = 1200
         self.atk = 600
         self.do_atk()
@@ -263,27 +344,23 @@ class Cat_attack():
         self.state = 'paw'
 
         # Set atk 
-        self.width = 220
-        self.height = 300
+        self.width = 200
+        self.height = 280
         self.warn = 1500
         self.atk = 600
         self.do_atk()
 
-        # def atk_charge(self):
-    #     '''Phase 2 - charge
-    #     - the cat will charge at the player in a linear path until reaching end of boundary
-    #     - It should locate the last position of the player before charging'''
+    def spell_yarn(self, yarn, player):
+        self.state = 'yarn'
+        self.width = 60
+        self.height = 60
+        self.warn = 1000
+        self.atk = 0
 
-    # def spell_minions(self):
-    #     '''Phase 2 - ... maybe spawn minions, should just play animation for this attack and spawn kittens
-    #     - kittens will just follow player slowly and act as passive healing towards cat or meat shields'''
+        self.yarn = yarn
+        self.player = player
 
-    # def spell_yarn(self):
-    #     '''Phase 3 - yarn, throws yarn that slows player if they step in it'''
-
-    # def spell_totems(self):
-    #     '''Phase 3 - HEALING TOTEMS'''
-
+        self.do_atk()
     
     def do_atk(self):
             # Keeping in bounds
@@ -299,7 +376,7 @@ class Cat_attack():
         self.start_time = pygame.time.get_ticks()
         self.finished = False
         self.hit_player = False
-        self.current_sprite = 0
+        self.current_sprite = 0 
 
         self.warning_sfx.play()
 
@@ -309,9 +386,17 @@ class Cat_attack():
         
         time_passed = pygame.time.get_ticks() - self.start_time
 
+        #warning
         if time_passed < self.warn:
             pygame.draw.rect(self.screen, (255,0,0), self.hitbox, 3)
 
+        #yarn
+        elif self.state == 'yarn':
+            self.yarn.add(Yarn(self.hitbox.x, self.hitbox.y, self.player))
+            self.finished = True
+            return
+
+        # attacking
         elif time_passed < self.warn + self.atk:
             frames = self.sprites[self.state]
             self.current_sprite += 0.25
@@ -323,12 +408,41 @@ class Cat_attack():
             self.image = pygame.transform.scale(self.image, (self.width, self.height))
             self.screen.blit(self.image, self.hitbox.topleft)
 
-            if self.hit_player == False and self.hitbox.colliderect(self.player.rect):
+            if self.hit_player == False and self.hitbox.colliderect(self.player.hitbox):
                 self.player.hp -= 1
                 self.hit_player = True
         else:
             self.finished = True
             return
+
+class Yarn(basic):
+    def __init__(self, x, y, player):
+        image = pygame.image.load("imgs/yarn0.png").convert_alpha()
+        image = pygame.transform.scale(image, (50, 50))
+
+        super().__init__(image, x, y, True)
+        
+        self.player = player
+        self.hp = 1
+
+        self.spawn = pygame.time.get_ticks()
+        self.life = 5000
+
+        self.touched = False
+
+    def update(self):
+        curr_time = pygame.time.get_ticks()
+
+        if curr_time - self.spawn >= self.life:
+            self.kill()
+            return
+        if not self.touched and self.rect.colliderect(self.player.rect):
+            self.player.slow = curr_time + 2000
+            self.touched = True
+            self.kill()
+            return
+        
+    
 
 # MISC CLASSES
 class Dialogue():
@@ -345,12 +459,18 @@ class Dialogue():
         self.active = False
         self.finished = False
 
-        self.textbox_frame = [pygame.image.load("imgs/cat/chat/cat_chat0.png").convert_alpha(),
-                              pygame.image.load("imgs/cat/chat/cat_chat1.png").convert_alpha()]
+        self.textbox_frame = {'norm': [pygame.image.load("imgs/textbox/p1_cat_talk0.png").convert_alpha(),
+                                       pygame.image.load("imgs/textbox/p1_cat_talk1.png").convert_alpha()],
+                            'witch1': [pygame.image.load("imgs/textbox/p2_cat_talk2.png").convert_alpha(),
+                                        pygame.image.load("imgs/textbox/p2_cat_talk3.png").convert_alpha()],
+                            'witch2': [pygame.image.load("imgs/textbox/p3_cat_talk4.png").convert_alpha(),
+                                        pygame.image.load("imgs/textbox/p3_cat_talk5.png").convert_alpha()],}
         self.curr_frame = 0
+        self.current_textbox = 'norm'
 
-    def start(self, dialogue):
+    def start(self, dialogue, textbox = 'norm'):
         self.dialogue = dialogue
+        self.current_textbox = textbox
         self.curr_frame = 0
         self.index = 0
         self.text_display = ''
@@ -391,6 +511,10 @@ class Dialogue():
                 self.text_display = ''
                 self.char_timer = 0
                 self.curr_frame = 0
+
+    def textbox_change(self, textbox):
+        self.current_textbox = textbox
+        self.curr_frame = 0
 
     def wrap_text(self, text, max_width):
         words = text.split(' ')
