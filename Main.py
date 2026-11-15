@@ -1,8 +1,8 @@
 '''
 Ellis Hu
-2026/10/17 - 2026/11/13
+2026/10/17 - 2026/11/14
 Time taken: 14 hours (in VS code, according to hackatime)
-            realistically is probably around 14 hours due to making assets
+            realistically is probably around 15 hours due to making assets
 Game is supposed to somewhat resemble a mix of touhou, IMPOSSIBLE SNAKE by marchalade,
 and The Binding of Issac
 
@@ -17,16 +17,13 @@ TO ADD:
 '''
 import aaa
 import pygame
-
-
-
-
+from utils import resource_path
 
 # DISPLAY
 pygame.init()
 window = pygame.display.set_mode((600, 600))
 pygame.display.set_caption("Dear Magic Cat")
-background = pygame.image.load("imgs/background.png").convert_alpha()
+background = pygame.image.load(resource_path("imgs/background.png")).convert_alpha()
 background = pygame.transform.scale(background, (600,600))
 
 
@@ -36,7 +33,7 @@ background = pygame.transform.scale(background, (600,600))
 # SOUNDS
 
 pygame.mixer.init()
-pygame.mixer.music.load('sfx/intro.mp3')
+pygame.mixer.music.load(resource_path("sfx/intro.mp3"))
 pygame.mixer.music.play()
 
 
@@ -53,14 +50,19 @@ yarn = pygame.sprite.Group()
 player = aaa.Player(window)
 player_hp_bar = aaa.Player_hp(window, player)
 
-cat_img = pygame.image.load('imgs/cat.png').convert_alpha()
+cat_img = pygame.image.load(resource_path("imgs/cat.png"))
 cat = aaa.Cat(250, 100, cat_img, window)
 cat_atk = aaa.Cat_attack(window, player, 'paw')
 
 
 # DIALOGUE DIALOGUE DIALOGUE !!
 dialogue = aaa.Dialogue(window)
-intro_speaking = [{'text' : ('and so we meet again, pesky serpent')}, 
+intro_speaking = [{'text' : ('hello!! you play as the snake')}, 
+                  {'text' : ('use WASD to move and SPACE to shoot')}, 
+                  {'text' : ('your goal is to obliterate me, the cat')}, 
+                  {'text' : ('however, i do attack back. so make sure to avoid the appearing red squares! a sound cue will be played when i attack')}, 
+                  {'text' : ("that's all for the tutorial, so moving on!!")}, 
+                  {'text' : ('and so we meet again, pesky serpent')}, 
                   {'text' : ("you've been a ssslithering pest in my ssside for too long")}, 
                   {'text' : ('this food chain isnt large enough for the two of us, dear Python')}, 
                   {'text' : ('i best you in scale(s), afterall')}, 
@@ -92,13 +94,11 @@ char_sprites.add(player, cat)
 
 
 
-
-
-
-
 def loop():
+    
     intro_finished = False
     gamestate = 0
+    winlose = None
     phase = 1
         # Cat timers
     cat_action_timer = 0
@@ -162,6 +162,7 @@ def loop():
             if cat.hp <= 0 and phase == 1:
                 phase = 2
                 cat_act_delay = 750
+                cat_atk.cancel_atk()
                 cat.reset(phase)
                 char_sprites.add(cat)
                 dialogue.textbox_change('witch1')
@@ -169,6 +170,7 @@ def loop():
             elif cat.hp <= 0 and phase == 2:
                 phase = 3
                 cat_act_delay = 450
+                cat_atk.cancel_atk()
                 cat.reset(phase)
                 char_sprites.add(cat)
                 dialogue.textbox_change('witch2')
@@ -177,7 +179,7 @@ def loop():
                 gamestate = 1
 
             if not intro_finished and not pygame.mixer.music.get_busy():
-                pygame.mixer.music.load('sfx/loop.mp3')
+                pygame.mixer.music.load(resource_path('sfx/loop.mp3'))
                 pygame.mixer.music.play(-1)
                 intro_finished = True
             
@@ -192,14 +194,14 @@ def loop():
                     window.blit(text, (50, 400 + i * 30))
 
         elif gamestate == 1:
-            window.fill((0,0,0))
-            text = font.render('you win!', True, (255,255,255))
-            window.blit(text, (300,300))
+            if winlose == None:
+                winlose = aaa.WinLose(window, 'win')
+            winlose.update()
     
         elif gamestate == 2:
-            window.fill((0,0,0))
-            text = font.render('you lost :(', True, (255,255,255))
-            window.blit(text, (300,300))
+            if winlose == None:
+                winlose = aaa.WinLose(window, 'lose')
+            winlose.update()
 
         pygame.display.flip()
         clock.tick(60)

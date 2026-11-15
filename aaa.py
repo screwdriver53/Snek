@@ -1,5 +1,6 @@
 import pygame
 import random
+from utils import resource_path
 
     # Overall parent class, majority of sprites will be based on this i think idk
 class basic(pygame.sprite.Sprite):
@@ -21,19 +22,23 @@ class Player(basic):
         self.screen = screen
         self.width = screen.get_width()
         self.height = screen.get_height()
-        self.sprites = {'walk':[pygame.image.load("imgs/mc/move1.png").convert_alpha(),
-                                pygame.image.load("imgs/mc/move2.png").convert_alpha(),
-                                pygame.image.load("imgs/mc/move3.png").convert_alpha(),
-                                pygame.image.load("imgs/mc/move4.png").convert_alpha(),
-                                pygame.image.load("imgs/mc/move5.png").convert_alpha(),
-                                pygame.image.load("imgs/mc/move6.png").convert_alpha(),
-                                pygame.image.load("imgs/mc/move7.png").convert_alpha(),
-                                ], 
-                        'attack':[pygame.image.load("imgs/mc/atk_1.png").convert_alpha(),
-                                  pygame.image.load("imgs/mc/atk_2.png").convert_alpha(),
-                                  pygame.image.load("imgs/mc/atk_3.png").convert_alpha(),
-                                  pygame.image.load("imgs/mc/atk_4.png").convert_alpha(),
-                                ]}
+        self.sprites = {
+                    'walk': [
+                        pygame.image.load(resource_path("imgs/mc/move1.png")).convert_alpha(),
+                        pygame.image.load(resource_path("imgs/mc/move2.png")).convert_alpha(),
+                        pygame.image.load(resource_path("imgs/mc/move3.png")).convert_alpha(),
+                        pygame.image.load(resource_path("imgs/mc/move4.png")).convert_alpha(),
+                        pygame.image.load(resource_path("imgs/mc/move5.png")).convert_alpha(),
+                        pygame.image.load(resource_path("imgs/mc/move6.png")).convert_alpha(),
+                        pygame.image.load(resource_path("imgs/mc/move7.png")).convert_alpha(),
+                    ],
+                    'attack': [
+                        pygame.image.load(resource_path("imgs/mc/atk_1.png")).convert_alpha(),
+                        pygame.image.load(resource_path("imgs/mc/atk_2.png")).convert_alpha(),
+                        pygame.image.load(resource_path("imgs/mc/atk_3.png")).convert_alpha(),
+                        pygame.image.load(resource_path("imgs/mc/atk_4.png")).convert_alpha(),
+                    ]
+        }
         self.state = 'walk'
         self.current_sprite = 0
         self.image = self.sprites[self.state][self.current_sprite]
@@ -106,11 +111,12 @@ class Player_hp():
     def __init__(self, screen, player):
         self.screen = screen
         self.player = player
-        self.sprites = [pygame.image.load("imgs/mc/hp_bar/Snake_hp1.png").convert_alpha(),
-                        pygame.image.load("imgs/mc/hp_bar/Snake_hp2.png").convert_alpha(),
-                        pygame.image.load("imgs/mc/hp_bar/Snake_hp3.png").convert_alpha(),
-                        pygame.image.load("imgs/mc/hp_bar/Snake_hp4.png").convert_alpha(),
-                        ]
+        self.sprites = [
+            pygame.image.load(resource_path("imgs/mc/hp_bar/Snake_hp1.png")).convert_alpha(),
+            pygame.image.load(resource_path("imgs/mc/hp_bar/Snake_hp2.png")).convert_alpha(),
+            pygame.image.load(resource_path("imgs/mc/hp_bar/Snake_hp3.png")).convert_alpha(),
+            pygame.image.load(resource_path("imgs/mc/hp_bar/Snake_hp4.png")).convert_alpha(),
+        ]
     def update(self):
         image = self.sprites[3 - self.player.hp]
         self.screen.blit(image, (10, 520))
@@ -118,7 +124,7 @@ class Player_hp():
     # Player bullet class
 class Bullet(basic):
     def __init__(self, player, cat):
-        self.image = pygame.image.load("imgs/bullet.png").convert_alpha()
+        self.image = pygame.image.load(resource_path("imgs/bullet.png")).convert_alpha()
 
         x = player.rect.centerx - self.image.get_width()//2
         y = player.rect.top
@@ -159,52 +165,60 @@ class Cat(basic):
         self.height = screen.get_height()
 
         self.sprites = {
-            1 : {'walk':[pygame.image.load('imgs/p1/walk1.png').convert_alpha(),
-                            pygame.image.load('imgs/p1/walk2.png').convert_alpha(),
-                            pygame.image.load('imgs/p1/walk3.png').convert_alpha(),
-                            pygame.image.load('imgs/p1/walk4.png').convert_alpha(),
-                            pygame.image.load('imgs/p1/walk5.png').convert_alpha(),
-                            pygame.image.load('imgs/p1/walk6.png').convert_alpha(),
-                            ],
-                    'attack':[pygame.image.load('imgs/p1/atk1.png').convert_alpha(),
-                            pygame.image.load('imgs/p1/atk2.png').convert_alpha(),
-                            pygame.image.load('imgs/p1/atk3.png').convert_alpha(),
-                            pygame.image.load('imgs/p1/atk4.png').convert_alpha(),
-                            pygame.image.load('imgs/p1/atk5.png').convert_alpha(),
-                            pygame.image.load('imgs/p1/atk6.png').convert_alpha(),
-                            ]
-                    },
-            2 : {'walk':[pygame.image.load('imgs/p2/walk1.png').convert_alpha(),
-                            pygame.image.load('imgs/p2/walk2.png').convert_alpha(),
-                            pygame.image.load('imgs/p2/walk3.png').convert_alpha(),
-                            pygame.image.load('imgs/p2/walk4.png').convert_alpha(),
-                            pygame.image.load('imgs/p2/walk5.png').convert_alpha(),
-                            pygame.image.load('imgs/p2/walk6.png').convert_alpha(),
-                            ],
-                    'attack':[pygame.image.load('imgs/p2/atk1.png').convert_alpha(),
-                            pygame.image.load('imgs/p2/atk2.png').convert_alpha(),
-                            pygame.image.load('imgs/p2/atk3.png').convert_alpha(),
-                            pygame.image.load('imgs/p2/atk4.png').convert_alpha(),
-                            pygame.image.load('imgs/p2/atk5.png').convert_alpha(),
-                            pygame.image.load('imgs/p2/atk6.png').convert_alpha(),
-                            ]
-                    },
-            3 : {'walk':[pygame.image.load('imgs/p3/walk1.png').convert_alpha(),
-                            pygame.image.load('imgs/p3/walk2.png').convert_alpha(),
-                            pygame.image.load('imgs/p3/walk3.png').convert_alpha(),
-                            pygame.image.load('imgs/p3/walk4.png').convert_alpha(),
-                            pygame.image.load('imgs/p3/walk5.png').convert_alpha(),
-                            pygame.image.load('imgs/p3/walk6.png').convert_alpha(),
-                            ],
-                    'attack':[pygame.image.load('imgs/p3/atk1.png').convert_alpha(),
-                            pygame.image.load('imgs/p3/atk2.png').convert_alpha(),
-                            pygame.image.load('imgs/p3/atk3.png').convert_alpha(),
-                            pygame.image.load('imgs/p3/atk4.png').convert_alpha(),
-                            pygame.image.load('imgs/p3/atk5.png').convert_alpha(),
-                            pygame.image.load('imgs/p3/atk6.png').convert_alpha(),
-                            ]
-                    }
-        }
+                    1: {'walk': [
+                            pygame.image.load(resource_path('imgs/p1/walk1.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p1/walk2.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p1/walk3.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p1/walk4.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p1/walk5.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p1/walk6.png')).convert_alpha(),
+                        ],
+                        'attack': [
+                            pygame.image.load(resource_path('imgs/p1/atk1.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p1/atk2.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p1/atk3.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p1/atk4.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p1/atk5.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p1/atk6.png')).convert_alpha(),
+                        ]
+                        },
+                    2: {
+                        'walk': [
+                            pygame.image.load(resource_path('imgs/p2/walk1.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p2/walk2.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p2/walk3.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p2/walk4.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p2/walk5.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p2/walk6.png')).convert_alpha(),
+                                ],
+                        'attack': [
+                            pygame.image.load(resource_path('imgs/p2/atk1.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p2/atk2.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p2/atk3.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p2/atk4.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p2/atk5.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p2/atk6.png')).convert_alpha(),
+                                ]
+                        },
+                    3: {
+                        'walk': [
+                            pygame.image.load(resource_path('imgs/p3/walk1.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p3/walk2.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p3/walk3.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p3/walk4.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p3/walk5.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p3/walk6.png')).convert_alpha(),
+                                ],
+                        'attack': [
+                            pygame.image.load(resource_path('imgs/p3/atk1.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p3/atk2.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p3/atk3.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p3/atk4.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p3/atk5.png')).convert_alpha(),
+                            pygame.image.load(resource_path('imgs/p3/atk6.png')).convert_alpha(),
+                                ]
+                        }
+                        }
         self.state = 'walk'
         self.current_sprite = 0
         self.move = x
@@ -296,7 +310,7 @@ class Cat(basic):
     # Cat attack class
 class Cat_attack():
     def __init__(self, screen, player, state):
-        self.warning_sfx = pygame.mixer.Sound('sfx/cat_atk_warn.mp3')
+        self.warning_sfx = pygame.mixer.Sound(resource_path('sfx/cat_atk_warn.mp3'))
         self.screen = screen
         self.player = player
         self.state = state
@@ -306,21 +320,26 @@ class Cat_attack():
         self.finished = True
         self.hit_player = False
     
-        self.sprites = {'scratch':[pygame.image.load("imgs/scratch/scratch0.png").convert_alpha(),
-                                   pygame.image.load("imgs/scratch/scratch1.png").convert_alpha(),
-                                   pygame.image.load("imgs/scratch/scratch2.png").convert_alpha(),
-                                   pygame.image.load("imgs/scratch/scratch3.png").convert_alpha(),
-                                   pygame.image.load("imgs/scratch/scratch4.png").convert_alpha(),
-                                   pygame.image.load("imgs/scratch/scratch5.png").convert_alpha()],
-                        'paw':[pygame.image.load("imgs/paw/paw1.png").convert_alpha(),
-                               pygame.image.load("imgs/paw/paw2.png").convert_alpha(),
-                               pygame.image.load("imgs/paw/paw3.png").convert_alpha(),
-                               pygame.image.load("imgs/paw/paw4.png").convert_alpha(),
-                               pygame.image.load("imgs/paw/paw5.png").convert_alpha(),
-                               pygame.image.load("imgs/paw/paw6.png").convert_alpha(),
-                               pygame.image.load("imgs/paw/paw7.png").convert_alpha(),
-                               pygame.image.load("imgs/paw/paw8.png").convert_alpha(),]
-                        }
+        self.sprites = {
+            'scratch': [
+                pygame.image.load(resource_path("imgs/scratch/scratch0.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/scratch/scratch1.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/scratch/scratch2.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/scratch/scratch3.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/scratch/scratch4.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/scratch/scratch5.png")).convert_alpha(),
+            ],
+            'paw': [
+                pygame.image.load(resource_path("imgs/paw/paw1.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/paw/paw2.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/paw/paw3.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/paw/paw4.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/paw/paw5.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/paw/paw6.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/paw/paw7.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/paw/paw8.png")).convert_alpha(),
+            ]
+        }
 
         self.current_sprite = 0
         self.image = self.sprites[self.state][self.current_sprite]
@@ -380,6 +399,14 @@ class Cat_attack():
 
         self.warning_sfx.play()
 
+    def cancel_atk(self):
+        self.finished = True
+        self.hitbox = None
+        self.current_sprite = 0
+        self.hit_player = False
+        self.state = None
+
+
     def update(self):
         if self.finished:
             return
@@ -417,7 +444,7 @@ class Cat_attack():
 
 class Yarn(basic):
     def __init__(self, x, y, player):
-        image = pygame.image.load("imgs/yarn0.png").convert_alpha()
+        image = pygame.image.load(resource_path("imgs/yarn0.png")).convert_alpha()
         image = pygame.transform.scale(image, (50, 50))
 
         super().__init__(image, x, y, True)
@@ -459,12 +486,20 @@ class Dialogue():
         self.active = False
         self.finished = False
 
-        self.textbox_frame = {'norm': [pygame.image.load("imgs/textbox/p1_cat_talk0.png").convert_alpha(),
-                                       pygame.image.load("imgs/textbox/p1_cat_talk1.png").convert_alpha()],
-                            'witch1': [pygame.image.load("imgs/textbox/p2_cat_talk2.png").convert_alpha(),
-                                        pygame.image.load("imgs/textbox/p2_cat_talk3.png").convert_alpha()],
-                            'witch2': [pygame.image.load("imgs/textbox/p3_cat_talk4.png").convert_alpha(),
-                                        pygame.image.load("imgs/textbox/p3_cat_talk5.png").convert_alpha()],}
+        self.textbox_frame = {
+            'norm': [
+                pygame.image.load(resource_path("imgs/textbox/p1_cat_talk0.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/textbox/p1_cat_talk1.png")).convert_alpha()
+            ],
+            'witch1': [
+                pygame.image.load(resource_path("imgs/textbox/p2_cat_talk2.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/textbox/p2_cat_talk3.png")).convert_alpha()
+            ],
+            'witch2': [
+                pygame.image.load(resource_path("imgs/textbox/p3_cat_talk4.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/textbox/p3_cat_talk5.png")).convert_alpha()
+            ],
+        }
         self.curr_frame = 0
         self.current_textbox = 'norm'
 
@@ -532,3 +567,99 @@ class Dialogue():
 
         lines.append(current_line.strip())
         return lines
+
+class WinLose():
+    def __init__(self, screen, state):
+        self.screen = screen
+        self.state = state
+        
+        self.sprites = {
+            'lose': [
+                pygame.image.load(resource_path("imgs/lose/lose00.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose01.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose02.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose03.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose04.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose05.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose06.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose07.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose08.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose09.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose10.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose11.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose12.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose13.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose14.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose15.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose16.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose17.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose18.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose19.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose20.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose21.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose22.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose23.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose24.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose25.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose26.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose27.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose28.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/lose/lose29.png")).convert_alpha(),
+
+            ],
+            'win': [
+                pygame.image.load(resource_path("imgs/win/win00.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win01.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win02.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win03.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win04.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win05.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win06.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win07.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win08.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win09.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win10.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win11.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win12.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win13.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win14.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win15.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win16.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win17.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win18.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win19.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win20.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win21.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win22.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win23.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win24.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win25.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win26.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win27.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win28.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win29.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win30.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win31.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win32.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win33.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win34.png")).convert_alpha(),
+                pygame.image.load(resource_path("imgs/win/win35.png")).convert_alpha(),
+
+            ]
+        }
+
+        self.current_sprite = 0
+
+    def update(self):
+        frames = self.sprites[self.state]
+
+        self.current_sprite += 0.1
+
+        if int(self.current_sprite) >= len(frames):
+            self.current_sprite = len(frames)-1
+
+        self.image = frames[int(self.current_sprite)]
+
+        positioning = self.image.get_rect(center=(self.screen.get_width()//2, self.screen.get_height()//2))
+
+        self.screen.blit(self.image, positioning)
