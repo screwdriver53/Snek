@@ -1,8 +1,7 @@
 '''
 Ellis Hu
-2026/10/17 - 2026/11/14
-Time taken: 14 hours (in VS code, according to hackatime)
-            realistically is probably around 15 hours due to making assets
+2026/10/17 - 2026/11/15
+Time taken: 15 hours
 Game is supposed to somewhat resemble a mix of touhou, IMPOSSIBLE SNAKE by marchalade,
 and The Binding of Issac
 
