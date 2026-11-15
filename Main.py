@@ -50,9 +50,11 @@ cat_atk = aaa.Cat_attack(window, player, 'paw')
 dialogue = aaa.Dialogue(window)
 intro_speaking = [{'text' : ('hello!! you play as the snake')}, 
                   {'text' : ('use WASD to move and SPACE to shoot')}, 
+                  {'text' : ('you can also change the direction you shoot in by using IJKL')}, 
                   {'text' : ('your goal is to obliterate me, the cat')}, 
-                  {'text' : ('however, i do attack back. so make sure to avoid the appearing red squares! a sound cue will be played when i attack')}, 
-                  {'text' : ("that's all for the tutorial, so moving on!!")}, 
+                  {'text' : ('make sure to avoid the appearing red squares! a sound cue will be played when i attack')}, 
+                  {'text' : ("that's all for the tutorial, so moving on,,,")}, 
+                  {'text' : ("*cough cough hack hack cough*")}, 
                   {'text' : ('and so we meet again, pesky serpent')}, 
                   {'text' : ("you've been a ssslithering pest in my ssside for too long")}, 
                   {'text' : ('this food chain isnt large enough for the two of us, dear Python')}, 
@@ -67,13 +69,13 @@ d1 = [{'text' : ('pesky ssserpent..')},
       {'text' : ('you may be more grand of an opponent than i originally believed')},
       {'text' : ('you may have lasted up until now')},
       {'text' : ('but your luck spree ends here')},
-      {'text' : ('ill draw a line in the sand so you can see')},
-      {'text' : ('ok so like')}]
+      {'text' : ('how about you try slithering')},
+      {'text' : ('OUT OF THIS!!')},]
 
 d2 = [{'text' : ('snake?')},
       {'text' : ('more like...')},
       {'text' : ('DUMB')},
-      {'text' : ('get it cuz ur dumb and a snake')},
+      {'text' : ('get it cuz ur DUMB and a snake')},
       {'text' : ('ok anyways i rlly hate u man')},
       {'text' : ('like im hungry and youre just eating everything')},
       {'text' : ('youre also always in the way')},
@@ -86,10 +88,15 @@ char_sprites.add(player, cat)
 
 
 def loop():
-    
+    # abbuiabwuiheaeu like background stuff 
     intro_finished = False
     gamestate = 0
     winlose = None
+
+    # player sutff
+    player.shoot_dir = 'up'
+
+    # cat stuff
     phase = 1
         # Cat timers
     cat_action_timer = 0
@@ -110,6 +117,8 @@ def loop():
                         # if the game starts then space is used for attacking
                         bullets.add(aaa.Bullet(player, cat))
                         player.atk()
+                elif gamestate == 0:
+                    player.change_dir(event.key)
 
 
         if gamestate == 0 and not dialogue.active:
@@ -144,6 +153,7 @@ def loop():
 
         if gamestate == 0:
             cat_atk.update()
+            player.update()
             char_sprites.draw(window)
             bullets.draw(window)
             player_hp_bar.update()

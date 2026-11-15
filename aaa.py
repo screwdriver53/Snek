@@ -49,6 +49,15 @@ class Player(basic):
         self.hitbox = pygame.Rect(0, 0, self.hitbox_radius * 2, self.hitbox_radius * 2)
         self.hitbox.center = self.rect.center
 
+        #arrow stuff
+        self.shoot_dir = 'up'
+        self.directions = {'up':(0,-1), 'down':(0,1),'left':(-1,0), 'right':(1,0)}
+        self.arrow_sprite = {'up':pygame.image.load(resource_path('imgs/arrow/up.png')).convert_alpha(),
+                            'left':pygame.image.load(resource_path('imgs/arrow/left.png')).convert_alpha(),
+                            'down':pygame.image.load(resource_path('imgs/arrow/down.png')).convert_alpha(),
+                            'right':pygame.image.load(resource_path('imgs/arrow/right.png')).convert_alpha(),
+                            }
+
     def hp(self):
         return self.hp
 
@@ -93,6 +102,16 @@ class Player(basic):
             self.state = 'attack'
             self.current_sprite = 0
 
+    def change_dir(self, key):
+        if key == pygame.K_i:
+            self.shoot_dir = 'up'
+        elif key == pygame.K_j:
+            self.shoot_dir = 'left'
+        elif key == pygame.K_k:
+            self.shoot_dir = 'down'
+        elif key == pygame.K_l:
+            self.shoot_dir = 'right'
+
     def update(self):
         frames = self.sprites[self.state]
         self.current_sprite += 0.25
@@ -106,6 +125,14 @@ class Player(basic):
                 self.current_sprite = 0
 
         self.image = frames[int(self.current_sprite)]
+
+        arrow = self.arrow_sprite[self.shoot_dir]
+
+        pos = {'up':(self.rect.centerx - arrow.get_width()//2, self.rect.top - arrow.get_height()),
+               'left':(self.rect.left - arrow.get_width(), self.rect.centery - arrow.get_height()//2),
+               'down':(self.rect.centerx - arrow.get_width()//2, self.rect.bottom),
+               'right':(self.rect.right, self.rect.centery - arrow.get_height()//2)}
+        self.screen.blit(arrow, pos[self.shoot_dir])
 
 class Player_hp():
     def __init__(self, screen, player):
@@ -126,13 +153,17 @@ class Bullet(basic):
     def __init__(self, player, cat):
         self.image = pygame.image.load(resource_path("imgs/bullet.png")).convert_alpha()
 
+        self.direction = player.directions[player.shoot_dir]
+        self.speed = 10
+
         x = player.rect.centerx - self.image.get_width()//2
         y = player.rect.top
 
         super().__init__(self.image, x, y, True)
         self.cat = cat
     def movement(self):
-        self.rect.y -= 10
+        self.rect.x += self.direction[0] * self.speed
+        self.rect.y += self.direction[1] * self.speed
             # if it hits the cat
         if self.rect.colliderect(self.cat.rect):
             self.cat.hp -= 1
@@ -143,11 +174,9 @@ class Bullet(basic):
                 self.cat.kill()
             return
 
-            # kill bullet if hit screen
-        if self.rect.bottom < 0:
+            # kill bullet if hits screen anywhere
+        if (self.rect.right <= 0 or self.rect.left >= 600 or self.rect.bottom <= 0 or self.rect.top >= 600):
             self.kill()
-            self.bullet_CD = False
-            return
 
         
 
