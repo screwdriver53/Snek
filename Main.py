@@ -4,16 +4,8 @@ Ellis Hu
 Time taken: 15 hours
 Game is supposed to somewhat resemble a mix of touhou, IMPOSSIBLE SNAKE by marchalade,
 and The Binding of Issac
-
-TO ADD: 
-- Phase 2 and 3
-    - New sprites for cat
-    - New attacks for cat
-
-- win/lose animations
-- Maybe a sort of "brain" or learning algorithm, where it will be noted
-    where the player likes to hang out at to increase attack frequency in that area
 '''
+
 import aaa
 import pygame
 from utils import resource_path
